@@ -40,6 +40,39 @@ module.exports.getRecent = async (collectionName) => {
 	return result;
 }
 
+module.exports.registerPlayer = async (name) => {
+	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
+	const dbo = client.db("a8visualizer");
+	const collection_gamedata = dbo.collection("gameData");
+	await collection_gamedata.findOneAndUpdate({}, {$set:{ "name": name, "success": 0, "fail": 0, "sent": 0, "received": 0 }}, { upsert: true });
+	await client.close();
+};
+
+module.exports.setSuccess = async (number) => {
+	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
+	const dbo = client.db("a8visualizer");
+	const collection_gamedata = dbo.collection("gameData");
+	await collection_gamedata.findOneAndUpdate({ },{$set: { "success": Number(number) }});
+	//const myReservation = await collection.findOne({ "_id": ObjectId(req.body.object_id) });
+	await client.close();
+};
+module.exports.setFail = async (number) => {
+	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
+	const dbo = client.db("a8visualizer");
+	const collection_gamedata = dbo.collection("gameData");
+	await collection_gamedata.findOneAndUpdate({ },{$set: { "fail": Number(number) }});
+	//const myReservation = await collection.findOne({ "_id": ObjectId(req.body.object_id) });
+	await client.close();
+};
+
+module.exports.getScore = async () => {
+	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
+	const dbo = client.db("a8visualizer");
+	const collection_gamedata = dbo.collection("gameData");
+	const result = await collection_gamedata.findOne({});
+	await client.close();
+	return result;
+};
 module.exports.getRecentHanakoAndTaro = async () => {
 	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
 	const dbo = client.db("a8visualizer");
