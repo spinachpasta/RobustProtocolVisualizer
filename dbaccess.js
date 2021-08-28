@@ -18,10 +18,10 @@ module.exports.taroFromHanako = async (size) => {
 	//const myReservation = await collection.findOne({ "_id": ObjectId(req.body.object_id) });
 	await client.close();
 };
-module.exports.hanakoFromTaro = async (size) => {
+module.exports.tarosent = async (size) => {
 	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
 	const dbo = client.db("a8visualizer");
-	const collection = dbo.collection("hanakoFromTaro");
+	const collection = dbo.collection("tarosent");
 	await collection.insertOne({ "request_uuid": uuidv4(), "timestamp": new Date(), "size": size });
 	//const myReservation = await collection.findOne({ "_id": ObjectId(req.body.object_id) });
 	await client.close();
@@ -97,7 +97,7 @@ module.exports.getRecentHanakoAndTaro = async () => {
 	const dbo = client.db("a8visualizer");
 	const [result, result1, taroReceived, hanakoReceived] =
 		await Promise.all([
-			getRecentReq(dbo, "hanakoFromTaro"),
+			getRecentReq(dbo, "tarosent"),
 			getRecentReq(dbo, "taroFromHanako"),
 			getRecentReq(dbo, "taroReceived"),
 			getRecentReq(dbo, "hanakoReceived")

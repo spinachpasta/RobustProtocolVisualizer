@@ -150,7 +150,7 @@ app.post('/taro_sent', async (req, res) => {
 		return;
 	}
 	try {
-		await dbaccess.hanakoFromTaro(Number(req.body.size));
+		await dbaccess.tarosent(Number(req.body.size));
 	} catch (e) {
 		console.log(e);
 	}
