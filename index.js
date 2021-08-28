@@ -17,6 +17,7 @@ function authorize(body) {
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 app.set('port', PORT);
 app.get('/', (req, res) => {
