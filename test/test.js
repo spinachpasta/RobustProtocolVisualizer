@@ -1,4 +1,6 @@
 var assert = require('assert');
+require('dotenv').config()
+
 const dbaccess = require("../dbaccess.js");
 
 

@@ -1,5 +1,4 @@
 var MongoClient = require('mongodb').MongoClient;
-require('dotenv').config()
 const mongourl = process.env.MONGOURL;
 const uuidv4 = require("uuid").v4;
 
@@ -27,6 +26,26 @@ module.exports.hanakoFromTaro = async (size) => {
 	//const myReservation = await collection.findOne({ "_id": ObjectId(req.body.object_id) });
 	await client.close();
 };
+
+
+module.exports.taroReceived = async (size) => {
+	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
+	const dbo = client.db("a8visualizer");
+	const collection = dbo.collection("taroReceived");
+	await collection.insertOne({ "request_uuid": uuidv4(), "timestamp": new Date(), "size": size });
+	//const myReservation = await collection.findOne({ "_id": ObjectId(req.body.object_id) });
+	await client.close();
+};
+module.exports.hanakoReceived = async (size) => {
+	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
+	const dbo = client.db("a8visualizer");
+	const collection = dbo.collection("hanakoReceived");
+	await collection.insertOne({ "request_uuid": uuidv4(), "timestamp": new Date(), "size": size });
+	//const myReservation = await collection.findOne({ "_id": ObjectId(req.body.object_id) });
+	await client.close();
+};
+
+
 const getRecentReq = async (dbo, name) => {
 	const collection = dbo.collection(name);
 	return collection.find({}).limit(3).toArray();
@@ -76,10 +95,15 @@ module.exports.getScore = async () => {
 module.exports.getRecentHanakoAndTaro = async () => {
 	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
 	const dbo = client.db("a8visualizer");
-	const [result, result1] =
-		await Promise.all([getRecentReq(dbo, "hanakoFromTaro"), getRecentReq(dbo, "taroFromHanako")]);
+	const [result, result1, taroReceived, hanakoReceived] =
+		await Promise.all([
+			getRecentReq(dbo, "hanakoFromTaro"),
+			getRecentReq(dbo, "taroFromHanako"),
+			getRecentReq(dbo, "taroReceived"),
+			getRecentReq(dbo, "hanakoReceived")
+		]);
 	await client.close();
-	return { hanakoFromTaro: result, taroFromHanako: result1 };
+	return { hanakoFromTaro: result, taroFromHanako: result1, hanakoReceived: hanakoReceived, taroReceived: taroReceived };
 }
 
 module.exports.resetGame = async () => {
@@ -87,15 +111,17 @@ module.exports.resetGame = async () => {
 	const dbo = client.db("a8visualizer");
 	const collection = dbo.collection("taroFromHanako");
 	const collection1 = dbo.collection("hanakoFromHanako");
+	const collection2 = dbo.collection("taroReceived");
+	const collection3 = dbo.collection("hanakoReceived");
 	try {
-		await Promise.all([collection.drop(), collection1.drop(), updateScoreboard()]);
+		await Promise.all([collection.drop(), collection1.drop(), collection2.drop(), collection3.drop(), updateScoreboard()]);
 	} catch (e) {
 
 	}
 	await client.close();
 }
 
-module.exports.getScoreboard = async ()=> {
+module.exports.getScoreboard = async () => {
 	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
 	const dbo = client.db("a8visualizer");
 	const collection = dbo.collection("scoreboard");
