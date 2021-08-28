@@ -69,9 +69,17 @@ describe('dbaccess', function () {
 	describe('resetGame', function () {
 		it('should clear taroFromHanako collection', async function () {
 			this.timeout(20000);
+			const before = await dbaccess.getScore();
 			await dbaccess.resetGame();
 			const result = await dbaccess.getRecent("taroFromHanako");
+			const scoreboard = await dbaccess.getScoreboard();
 			assert(result.length == 0);
+			assert(scoreboard.length > 0);
+			// console.log(scoreboard);
+			// console.log(before);
+			assert(scoreboard.filter((d) => {
+				return d.name == before.name;
+			}).length==1);
 		});
 	});
 	describe('getRecentHanakoAndTaro', function () {
