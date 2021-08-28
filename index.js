@@ -203,6 +203,12 @@ app.get("/scoreboard",async(req,res)=>{
 app.get("/gamedata",async(req,res)=>{
 	res.send(await dbaccess.getScore());
 	res.end();
+});
+
+
+app.get("/requests",async(req,res)=>{
+	res.send(await dbaccess.getRecentHanakoAndTaro());
+	res.end();
 })
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));

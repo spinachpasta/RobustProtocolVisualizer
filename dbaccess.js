@@ -54,7 +54,7 @@ module.exports.getRecent = async (collectionName) => {
 	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
 	const dbo = client.db("a8visualizer");
 	const collection = dbo.collection(collectionName);
-	const result = await collection.find({}).limit(3).toArray();
+	const result = await collection.find({}).limit(10).toArray();
 	await client.close();
 	return result;
 }
