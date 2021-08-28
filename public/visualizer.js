@@ -17,17 +17,21 @@ window.onload = function () {
 		});
 		for (p of result.tarosent) {
 			if (processedPackets.includes(p.request_uuid)) {
-			} else {
+			} else  if (new Date().getTime() - new Date(p.timestamp).getTime() < 10000) {
 				processedPackets.push(p.request_uuid);
-				boxes.push(new PacketBox(p.size, true));
+				for (let i = 0; i < p.size&&i<10; i++) {
+					boxes.push(new PacketBox(p.size, true, -i * 15));
+				}
 			}
 		}
 		for (p of result.hanakoReceived) {
 			if (processedPackets.includes(p.request_uuid)) {
 
-			} else {
+			} else if (new Date().getTime() - new Date(p.timestamp).getTime() < 10000) {
 				processedPackets.push(p.request_uuid);
-				boxes.push(new PacketBox(p.size, false));
+				for (let i = 0; i < p.size&&i<10; i++) {
+					boxes.push(new PacketBox(p.size, false, -i * 15));
+				}
 			}
 		}
 		console.log(result);
@@ -60,8 +64,8 @@ function createTd(text) {
 }
 
 class PacketBox {
-	constructor(size, taro) {
-		this.x = 0;
+	constructor(size, taro, x) {
+		this.x = x || 0;
 		this.size = size;
 		this.taro = taro;
 	}
@@ -78,6 +82,6 @@ class PacketBox {
 				return;
 			}
 		}
-		ctx.fillRect(this.x, 100, 100, 100);
+		ctx.fillRect(this.x, 100, 10, 10);
 	}
 }
