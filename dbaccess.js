@@ -48,7 +48,7 @@ module.exports.hanakoReceived = async (size) => {
 
 const getRecentReq = async (dbo, name) => {
 	const collection = dbo.collection(name);
-	return collection.find({}).limit(3).toArray();
+	return collection.find({}).sort({"timestamp":-1}).limit(10).toArray();
 }
 module.exports.getRecent = async (collectionName) => {
 	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
@@ -110,13 +110,14 @@ module.exports.resetGame = async () => {
 	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
 	const dbo = client.db("a8visualizer");
 	const collection = dbo.collection("taroFromHanako");
-	const collection1 = dbo.collection("hanakoFromHanako");
+	const tarosent = dbo.collection("tarosent");
 	const collection2 = dbo.collection("taroReceived");
 	const collection3 = dbo.collection("hanakoReceived");
+	const request_collection = dbo.collection("request_collection");
 	try {
-		await Promise.all([collection.drop(), collection1.drop(), collection2.drop(), collection3.drop(), updateScoreboard()]);
+		await Promise.allSettled([collection.drop(), tarosent.drop(), collection2.drop(), collection3.drop(),request_collection.drop(), updateScoreboard()]);
 	} catch (e) {
-
+		console.log(e);
 	}
 	await client.close();
 }

@@ -19,7 +19,7 @@ window.onload = function () {
 			if (processedPackets.includes(p.request_uuid)) {
 			} else {
 				processedPackets.push(p.request_uuid);
-				boxes.push(new PacketBox(p.size, false));
+				boxes.push(new PacketBox(p.size, true));
 			}
 		}
 		for (p of result.hanakoReceived) {
@@ -27,7 +27,7 @@ window.onload = function () {
 
 			} else {
 				processedPackets.push(p.request_uuid);
-				boxes.push(new PacketBox(p.size, true));
+				boxes.push(new PacketBox(p.size, false));
 			}
 		}
 		console.log(result);
