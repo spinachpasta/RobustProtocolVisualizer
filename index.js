@@ -193,4 +193,15 @@ app.post('/reset_game', async (req, res) => {
 	res.end();
 });
 
+app.get("/scoreboard",async(req,res)=>{
+	res.send(await dbaccess.getScoreboard());
+	res.end();
+});
+
+
+app.get("/gamedata",async(req,res)=>{
+	res.send(await dbaccess.getScore());
+	res.end();
+})
+
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
