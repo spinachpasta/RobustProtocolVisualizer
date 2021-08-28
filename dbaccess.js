@@ -22,7 +22,11 @@ module.exports.tarosent = async (size) => {
 	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
 	const dbo = client.db("a8visualizer");
 	const collection = dbo.collection("tarosent");
-	await collection.insertOne({ "request_uuid": uuidv4(), "timestamp": new Date(), "size": size });
+	const collection_gamedata = dbo.collection("gameData");
+	await Promise.allSettled([
+		collection_gamedata.updateOne({}, { $inc: { "sent": size } }),
+		collection.insertOne({ "request_uuid": uuidv4(), "timestamp": new Date(), "size": size })
+	]);
 	//const myReservation = await collection.findOne({ "_id": ObjectId(req.body.object_id) });
 	await client.close();
 };
@@ -40,7 +44,12 @@ module.exports.hanakoReceived = async (size) => {
 	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
 	const dbo = client.db("a8visualizer");
 	const collection = dbo.collection("hanakoReceived");
-	await collection.insertOne({ "request_uuid": uuidv4(), "timestamp": new Date(), "size": size });
+	const collection_gamedata = dbo.collection("gameData");
+	await Promise.allSettled([
+		collection.insertOne({ "request_uuid": uuidv4(), "timestamp": new Date(), "size": size }),
+		collection_gamedata.updateOne({}, { $inc: { "received": size } })
+	]
+	);
 	//const myReservation = await collection.findOne({ "_id": ObjectId(req.body.object_id) });
 	await client.close();
 };
@@ -48,7 +57,7 @@ module.exports.hanakoReceived = async (size) => {
 
 const getRecentReq = async (dbo, name) => {
 	const collection = dbo.collection(name);
-	return collection.find({}).sort({"timestamp":-1}).limit(10).toArray();
+	return collection.find({}).sort({ "timestamp": -1 }).limit(10).toArray();
 }
 module.exports.getRecent = async (collectionName) => {
 	const client = await MongoClient.connect(mongourl, { useNewUrlParser: true });
@@ -115,7 +124,7 @@ module.exports.resetGame = async () => {
 	const collection3 = dbo.collection("hanakoReceived");
 	const request_collection = dbo.collection("request_collection");
 	try {
-		await Promise.allSettled([collection.drop(), tarosent.drop(), collection2.drop(), collection3.drop(),request_collection.drop(), updateScoreboard()]);
+		await Promise.allSettled([collection.drop(), tarosent.drop(), collection2.drop(), collection3.drop(), request_collection.drop(), updateScoreboard()]);
 	} catch (e) {
 		console.log(e);
 	}
