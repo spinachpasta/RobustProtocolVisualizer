@@ -103,7 +103,7 @@ module.exports.getRecentHanakoAndTaro = async () => {
 			getRecentReq(dbo, "hanakoReceived")
 		]);
 	await client.close();
-	return { hanakoFromTaro: result, taroFromHanako: result1, hanakoReceived: hanakoReceived, taroReceived: taroReceived };
+	return { tarosent: result, hanakosent: result1, hanakoReceived: hanakoReceived, taroReceived: taroReceived };
 }
 
 module.exports.resetGame = async () => {
