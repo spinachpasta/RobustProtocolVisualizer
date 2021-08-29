@@ -21,7 +21,7 @@ window.onload = function () {
 			if (processedPackets.includes(p.request_uuid)) {
 			} else  if (new Date().getTime() - new Date(p.timestamp).getTime() < 10000) {
 				processedPackets.push(p.request_uuid);
-				for (let i = 0; i < p.size&&i<10; i++) {
+				for (let i = 0; i < p.size*0.1&&i<10; i++) {
 					boxes.push(new PacketBox(p.size, true, -i * 15));
 				}
 			}
@@ -31,7 +31,7 @@ window.onload = function () {
 
 			} else if (new Date().getTime() - new Date(p.timestamp).getTime() < 10000) {
 				processedPackets.push(p.request_uuid);
-				for (let i = 0; i < p.size&&i<10; i++) {
+				for (let i = 0; i < p.size*0.1&&i<10; i++) {
 					boxes.push(new PacketBox(p.size, false, -i * 15));
 				}
 			}
